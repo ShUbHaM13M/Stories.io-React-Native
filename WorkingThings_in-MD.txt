@@ -1,0 +1,10 @@
+List of the things that are working: 
+- All headings
+- paragraph
+- ordered list / unordered list
+- Bold / Iiallic / underline
+- StrikeThrough
+- Embedded Sections with tab
+- Code blocks
+- Links
+- Images
