@@ -6,7 +6,7 @@ export type Story = {
   title: string;
   content: string;
   createdAt: string;
-  claps: Array<string>;
+  likes: Array<string>;
   slug: string;
   convertedHtml: string;
   writtenBy: string;

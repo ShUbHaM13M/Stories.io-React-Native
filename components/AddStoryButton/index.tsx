@@ -26,7 +26,7 @@ const AddStoryButton = ({ onPress }: { onPress: () => void }) => {
     ],
     backgroundColor: interpolateColor(sharedValue.value, inputRange, [
       currentTheme.borderColor,
-      "#FF3E3E",
+      "#ff3e3e",
     ]),
   }));
 

@@ -10,20 +10,24 @@ import { useTheme } from "../../context/ThemeContext";
 import ThemedText from "../ThemedText";
 
 interface ButtonProps extends PressableProps {
+  color?: string;
   children: React.ReactNode;
   extraStyles?: StyleProp<ViewStyle>;
 }
 
-const Button = ({ children, extraStyles, ...props }: ButtonProps) => {
+const Button = ({ children, color, extraStyles, ...props }: ButtonProps) => {
   const { currentTheme } = useTheme();
+  const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   return (
     <Pressable
+      onPressIn={() => setIsFocused(true)}
+      onPressOut={() => setIsFocused(false)}
       style={({ pressed }) => [
         {
-          borderColor: currentTheme.borderColor,
+          borderColor: color || currentTheme.borderColor,
           backgroundColor: pressed
-            ? currentTheme.borderColor
+            ? color || currentTheme.borderColor
             : currentTheme.background,
         },
         styles.container,
@@ -31,7 +35,13 @@ const Button = ({ children, extraStyles, ...props }: ButtonProps) => {
       ]}
       {...props}
     >
-      <ThemedText styles={{ fontSize: 16, fontFamily: "Montserrat-Medium" }}>
+      <ThemedText
+        styles={{
+          fontSize: 16,
+          fontFamily: "Montserrat-Medium",
+          color: isFocused ? "#ffffff" : color || currentTheme.borderColor,
+        }}
+      >
         {children}
       </ThemedText>
     </Pressable>

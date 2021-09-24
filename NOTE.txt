@@ -1,33 +1,36 @@
 NOTE: SHUBHAM
 
-AuthContext
-	AuthProvider
-	Storing the user in secure storage
-	Providing user object and preferences throughout the application
+x	AuthContext
+x		AuthProvider
+x		Storing the user in secure storage
+x		Providing user object and preferences throughout the application
 
-ThemeContext
+x	 ThemeContext
 x		Styled-components theme
-	Store theme preference in secure storage
+x		Store theme preference in secure storage
 x		Theme change transition
 
 x	Loading Component
 x		Loading component similar to the web version
 x		Using Svg or Native views ?
 
-Logo 
-	Svg Logo animation
-
 x	Font
 x		Set Default font similar to website
-
-Shared Element Transition
-	shared element transition for stories in browse
 
 x	Header Transition
 x		Transition header when changing the theme
 
+Shared Element Transition
+	shared element transition for stories in browse
+
+Logo 
+	Svg Logo animation
+
 Your stories
 	Show list of all user stories
 	
-Button Types
-	Button styles for edit and delete buttons
+x	Button Types
+x		Button styles for edit and delete buttons
+
+Markdown Editor
+	Look for a markdown editor or make a custom one

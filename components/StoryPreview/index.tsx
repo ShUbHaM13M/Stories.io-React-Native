@@ -33,8 +33,8 @@ const StoryPreview = ({ story }: { story: Story }) => {
         </Button>
         {story.writtenBy == user?.username && (
           <>
-            <Button>Edit</Button>
-            <Button>Delete</Button>
+            <Button color="#4368b3">Edit</Button>
+            <Button color="#ff3e3e">Delete</Button>
           </>
         )}
       </View>

@@ -6,18 +6,21 @@ import {
   TextInputProps,
   TextStyle,
   StyleProp,
+  ViewStyle,
 } from "react-native";
 import { BorderedContainer } from "..";
 import { useTheme } from "../../context/ThemeContext";
 
 interface ThemedInputProps extends TextInputProps {
   extraStyles?: StyleProp<TextStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
   state: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ThemedInput = ({
   extraStyles,
+  containerStyle,
   state,
   setValue,
   ...props
@@ -34,6 +37,7 @@ const ThemedInput = ({
         backgroundColor: isFocused
           ? `${currentTheme.borderColor}66`
           : "transparent",
+        ...(containerStyle as object),
       }}
     >
       <TextInput
