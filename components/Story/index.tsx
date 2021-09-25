@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { BorderedContainer, Button, ThemedText } from "..";
 // @ts-ignore
 import { MarkdownView } from "react-native-markdown-view";
-import { Story as StoryProp } from "../../global";
+import { API_URL, Story as StoryProp } from "../../global";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import LikeButton from "./LikeButton";
@@ -20,9 +20,19 @@ const Story = ({ story }: { story: StoryProp }) => {
     story.likes.length
   );
 
-  const toggleLike = () => {
+  const toggleLike = async () => {
     setIsLiked((prev) => !prev);
-    setTotalLikes((prev) => (isLiked ? prev - 1 : prev + 1));
+    const LIKE_URL = `${API_URL}/api/story/${story.slug}/like`;
+    const options: RequestInit = {
+      method: "POST",
+      body: JSON.stringify({ id: user?.id }),
+      headers: { "Content-Type": "application/json" },
+    };
+    const res = await fetch(LIKE_URL, options);
+    const data = await res.json();
+    if (res.ok && data.type == "success") {
+      setTotalLikes((prev) => data.likes);
+    }
   };
 
   return (

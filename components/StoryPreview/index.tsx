@@ -28,7 +28,7 @@ const StoryPreview = ({ story }: { story: Story }) => {
         }}
       >
         {/* @ts-ignore */}
-        <Button onPress={() => navigation.navigate("Story", { story })}>
+        <Button onPress={() => navigation.navigate("Story", { story: story })}>
           View
         </Button>
         {story.writtenBy == user?.username && (

@@ -3,6 +3,7 @@ import Constants from "expo-constants";
 export const API_URL = Constants.manifest?.extra?.API_URL;
 
 export type Story = {
+  _id: string;
   title: string;
   content: string;
   createdAt: string;
@@ -10,14 +11,10 @@ export type Story = {
   slug: string;
   convertedHtml: string;
   writtenBy: string;
-  comments: Array<Comment>;
 };
 
 export type Comment = {
+  _id: string;
   content: string;
   by: string;
 };
-
-export interface CommentBoxProps {
-  comments: Array<Comment>;
-}
