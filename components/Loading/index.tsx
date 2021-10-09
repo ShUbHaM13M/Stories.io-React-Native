@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   Easing,
   interpolate,
@@ -10,6 +16,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useTheme } from "../../context/ThemeContext";
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 const boxSize = 35;
@@ -17,11 +24,15 @@ const boxSize = 35;
 interface Loading {
   offsetY?: number;
   offsetX?: number;
+  styles?: StyleProp<ViewStyle>;
 }
 
-const Loading = ({ offsetY = 0, offsetX = 0 }: Loading) => {
+const Loading = ({ offsetY = 0, offsetX = 0, styles }: Loading) => {
   const containerLeft = WIDTH * 0.5 - boxSize - offsetX;
   const containerTop = HEIGHT * 0.5 - boxSize - offsetY;
+
+  const { currentTheme } = useTheme();
+  const backgroundColor = currentTheme.text;
 
   const sharedValueBox1 = useSharedValue(0);
   const sharedValueBox2 = useSharedValue(0);
@@ -83,40 +94,49 @@ const Loading = ({ offsetY = 0, offsetX = 0 }: Loading) => {
       }),
       -1
     );
-    sharedValueBox2.value = withRepeat(
-      withDelay(
-        1000,
+    setTimeout(() => {
+      sharedValueBox2.value = withRepeat(
         withTiming(sharedValueBox2.value == 0 ? 1 : 0, {
           duration: 2000,
           easing: Easing.linear,
-        })
-      ),
-      -1
-    );
+        }),
+        -1
+      );
+    }, 1000);
   }, []);
 
   return (
-    <View
-      style={[styles.container, { left: containerLeft, top: containerTop }]}
-    >
-      <Animated.View style={[styles.box, animatedStyleBox1]} />
-      <Animated.View
-        style={[styles.box, animatedStyleBox2, { opacity: 0.6 }]}
-      />
+    <View style={[style.container, styles]}>
+      <View
+        style={{
+          position: "absolute",
+          left: containerLeft,
+          top: containerTop,
+        }}
+      >
+        <Animated.View
+          style={[style.box, animatedStyleBox1, { backgroundColor }]}
+        />
+        <Animated.View
+          style={[
+            style.box,
+            animatedStyleBox2,
+            { opacity: 0.6, backgroundColor },
+          ]}
+        />
+      </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
-    height: boxSize * 2,
-    width: boxSize * 2,
     position: "relative",
+    flex: 1,
   },
   box: {
     position: "absolute",
     top: 0,
-    backgroundColor: "black",
     height: boxSize,
     width: boxSize,
     transform: [],

@@ -1,16 +1,28 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Linking } from "react-native";
 import { BorderedContainer, Button, ThemedText } from "..";
 // @ts-ignore
 import { MarkdownView } from "react-native-markdown-view";
-import { API_URL, Story as StoryProp } from "../../global";
+import { Story as StoryProp } from "../../global";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import LikeButton from "./LikeButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
+import mdStyles from "../Editor/MdStyles";
+import { error, secondary } from "../../global/colors";
+import { useSocket } from "../../context/SocketContext";
 
-const Story = ({ story }: { story: StoryProp }) => {
+interface StoryComponentProps {
+  story: StoryProp;
+  onDeleteButtonPressed: (storyTitle: string, id: string) => void;
+}
+
+const Story = ({ story, onDeleteButtonPressed }: StoryComponentProps) => {
   const { currentTheme } = useTheme();
   const { user } = useAuth();
+  const navigation = useNavigation();
+  const { socket } = useSocket();
 
   const [isLiked, setIsLiked] = React.useState<boolean>(
     user ? story.likes.indexOf(user.id) !== -1 : false
@@ -21,28 +33,55 @@ const Story = ({ story }: { story: StoryProp }) => {
   );
 
   const toggleLike = async () => {
+    if (!user) return;
     setIsLiked((prev) => !prev);
-    const LIKE_URL = `${API_URL}/api/story/${story.slug}/like`;
-    const options: RequestInit = {
-      method: "POST",
-      body: JSON.stringify({ id: user?.id }),
-      headers: { "Content-Type": "application/json" },
-    };
-    const res = await fetch(LIKE_URL, options);
-    const data = await res.json();
-    if (res.ok && data.type == "success") {
-      setTotalLikes((prev) => data.likes);
-    }
+    setTotalLikes((prev) => {
+      if (isLiked) return prev - 1;
+      return prev + 1;
+    });
+    socket?.emit("like-story", {
+      storySlug: story.slug,
+      id: user?.id,
+      writtenBy: story.writtenBy,
+    });
   };
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on(`${story.slug}-liked`, ({ totalLikes }) => {
+      setTotalLikes(totalLikes.length);
+    });
+    return () => {
+      socket.off(`${story.slug}-liked`);
+    };
+  }, [socket]);
+
+  const _mdStyles = mdStyles(currentTheme.text, currentTheme.borderColor);
 
   return (
     <BorderedContainer>
-      <ThemedText styles={styles.title}>{story.title}</ThemedText>
+      <View style={[styles.storyContainer]}>
+        <ThemedText styles={styles.title}>{story.title}</ThemedText>
+        {story.isPrivate && (
+          <MaterialCommunityIcons
+            name="lock"
+            size={22}
+            color={currentTheme.text}
+          />
+        )}
+      </View>
       <ThemedText styles={styles.date}>{story.createdAt}</ThemedText>
       <View
         style={[styles.divider, { backgroundColor: currentTheme.borderColor }]}
       />
-      <MarkdownView>{story.content}</MarkdownView>
+      <MarkdownView
+        onLinkPress={(url: string) => {
+          Linking.openURL(url).catch((err) => console.warn(err.message));
+        }}
+        styles={_mdStyles}
+      >
+        {story.content}
+      </MarkdownView>
       <ThemedText styles={styles.author}>- {story.writtenBy}</ThemedText>
       <View
         style={[
@@ -58,11 +97,16 @@ const Story = ({ story }: { story: StoryProp }) => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Button
               extraStyles={{ marginRight: 8, paddingVertical: 10 }}
-              color="#4368b3"
+              color={secondary}
+              onPress={() => navigation.navigate("EditStory", { story })}
             >
               Edit
             </Button>
-            <Button extraStyles={{ paddingVertical: 10 }} color="#ff3e3e">
+            <Button
+              onPress={() => onDeleteButtonPressed(story.title, story._id)}
+              extraStyles={{ paddingVertical: 10 }}
+              color={error}
+            >
               Delete
             </Button>
           </View>
@@ -77,6 +121,11 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Bold",
     fontSize: 22,
   },
+  storyContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   date: {
     fontFamily: "Montserrat-Light",
     fontSize: 16,
@@ -85,11 +134,12 @@ const styles = StyleSheet.create({
   divider: {
     width: "100%",
     height: 2,
-    opacity: 0.6,
+    opacity: 0.4,
   },
   author: {
     fontFamily: "Montserrat-Light",
     textAlign: "right",
+    marginTop: 8,
   },
   actions: {
     flexDirection: "row",

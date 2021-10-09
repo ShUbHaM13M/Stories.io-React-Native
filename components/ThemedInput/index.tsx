@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { BorderedContainer } from "..";
 import { useTheme } from "../../context/ThemeContext";
+import { dark, light } from "../../global/colors";
 
 interface ThemedInputProps extends TextInputProps {
   extraStyles?: StyleProp<TextStyle>;
@@ -25,8 +26,9 @@ const ThemedInput = ({
   setValue,
   ...props
 }: ThemedInputProps) => {
-  const { currentTheme } = useTheme();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const { currentTheme } = useTheme();
 
   return (
     <BorderedContainer
@@ -46,7 +48,10 @@ const ThemedInput = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholderTextColor={`${currentTheme.text}66`}
-        style={[{ color: currentTheme.text, fontSize: 18 }, extraStyles]}
+        style={[
+          { color: currentTheme.text, fontSize: 18, fontFamily: "Montserrat" },
+          extraStyles,
+        ]}
         {...props}
       />
     </BorderedContainer>

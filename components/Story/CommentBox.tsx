@@ -1,10 +1,10 @@
-import SvgUri from "expo-svg-uri";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { BorderedContainer, Button, ThemedText } from "..";
 import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 import { useTheme } from "../../context/ThemeContext";
-import { API_URL, Comment as CommentType, Story } from "../../global";
+import { API_URL, Comment as CommentType } from "../../global";
 import ThemedInput from "../ThemedInput";
 import Comment from "./Comment";
 import NoComment from "./NoComment";
@@ -24,15 +24,17 @@ async function getAvatars(users: Array<string>) {
 
 interface CommentBoxProps {
   storySlug: string;
+  writtenBy: string;
 }
 
-const CommentBox = ({ storySlug }: CommentBoxProps) => {
-  const [comment, setComment] = React.useState<string>("");
-  const [comments, setComments] = React.useState<Array<CommentType>>([]);
+const CommentBox = ({ storySlug, writtenBy }: CommentBoxProps) => {
+  const [comment, setComment] = useState<string>("");
+  const [comments, setComments] = useState<Array<CommentType>>([]);
   const { currentTheme } = useTheme();
   const { isLoggedin, user } = useAuth();
+  const { socket } = useSocket();
   const [avatars, setAvatars] =
-    React.useState<Array<{ username: string; avatar: any }>>();
+    useState<Array<{ username: string; avatar: any }>>();
 
   const fetchComments = useCallback(async () => {
     const FETCH_URL = `${API_URL}/api/story/${storySlug}/get-comments`;
@@ -43,13 +45,18 @@ const CommentBox = ({ storySlug }: CommentBoxProps) => {
     }
   }, [storySlug]);
 
+  function _removeComment(comment_id: string) {
+    setComments((prev) => prev.filter((c) => c._id !== comment_id));
+  }
+
   const onDeleteButtonPressed = useCallback(
     async (comment_id: string) => {
       const DELETE_URL = `${API_URL}/api/story/${storySlug}/remove-comment/?comment_id=${comment_id}`;
       const res = await fetch(DELETE_URL);
       const data = await res.json();
       if (res.ok && data.type == "success") {
-        setComments((prev) => prev.filter((c) => c._id !== comment_id));
+        _removeComment(comment_id);
+        socket?.emit("delete-comment", { comment_id, storySlug });
       }
     },
     [comment]
@@ -69,19 +76,34 @@ const CommentBox = ({ storySlug }: CommentBoxProps) => {
     if (res.ok && data.type == "success") {
       setComments(data.comments);
       setComment("");
+      socket?.emit("add-comment", {
+        by: user?.username,
+        user: writtenBy,
+        story: storySlug,
+      });
     }
   }, [comment]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchComments();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const users = comments
       .filter((v, i, self) => self.findIndex((t) => t.by === v.by) === i)
       .map((v) => v.by);
     (async () => setAvatars(await getAvatars(users)))();
   }, [comments]);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on(`${storySlug}-comment-deleted`, ({ comment_id }) => {
+      _removeComment(comment_id);
+    });
+    return () => {
+      socket.off(`${storySlug}-comment-deleted`);
+    };
+  }, [socket]);
 
   return (
     <KeyboardAvoidingView>
@@ -131,7 +153,6 @@ const CommentBox = ({ storySlug }: CommentBoxProps) => {
               comment={comment}
             />
           );
-          return null;
         })}
         {comments.length <= 0 && <NoComment />}
       </BorderedContainer>

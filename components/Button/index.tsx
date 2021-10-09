@@ -28,7 +28,7 @@ const Button = ({ children, color, extraStyles, ...props }: ButtonProps) => {
           borderColor: color || currentTheme.borderColor,
           backgroundColor: pressed
             ? color || currentTheme.borderColor
-            : currentTheme.background,
+            : "transparent",
         },
         styles.container,
         extraStyles,

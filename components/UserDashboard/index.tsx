@@ -4,6 +4,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button, ThemedText } from "..";
 import { useAuth } from "../../context/AuthContext";
+import { useStory } from "../../context/StoryContext";
 import { useTheme } from "../../context/ThemeContext";
 
 const UserDashboard = () => {
@@ -37,7 +38,24 @@ const UserDashboard = () => {
           </ThemedText>
         </View>
       </View>
-      <Button extraStyles={{ marginTop: 20 }}>Your Stories</Button>
+      <Button
+        extraStyles={{ marginTop: 20 }}
+        onPress={() => {
+          //@ts-ignore
+          navigation.navigate("ChangeAvatar");
+        }}
+      >
+        Change Avatar
+      </Button>
+      <Button
+        extraStyles={{ marginTop: 8 }}
+        onPress={() => {
+          //@ts-ignore
+          navigation.navigate(`${user.username}'s Stories`);
+        }}
+      >
+        Your Stories
+      </Button>
       <Button
         extraStyles={{ marginTop: 8 }}
         onPress={() => {

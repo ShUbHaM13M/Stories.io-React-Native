@@ -7,6 +7,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { API_URL, Comment as CommentType } from "../../global";
 import IconButton from "../IconButton";
 import Svg, { Path } from "react-native-svg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface CommentProps {
   comment: CommentType;
@@ -43,15 +44,11 @@ const Comment = ({ comment, avatar, onDeleteButtonPressed }: CommentProps) => {
             onButtonPress={() => onDeleteButtonPressed(comment._id)}
             extraStyles={{ padding: 6 }}
           >
-            <Svg width={25} height={26} fill="none">
-              <Path
-                d="M3.125 7.161h18.75M8.333 7.161V5.078a2.083 2.083 0 012.084-2.084h4.166a2.083 2.083 0 012.084 2.084V7.16m3.125 0v14.583a2.083 2.083 0 01-2.084 2.084H7.292a2.083 2.083 0 01-2.084-2.084V7.161h14.584z"
-                stroke="#ff3e3e"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </Svg>
+            <MaterialCommunityIcons
+              name="delete-outline"
+              size={26}
+              color="#ff3e3e"
+            />
           </IconButton>
         )}
       </View>

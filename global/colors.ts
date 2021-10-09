@@ -3,6 +3,8 @@ const blue = "#0084a5";
 const purple = "#d8a4eb";
 const gray0 = "#f8f8f8";
 const gray5 = "#24282f";
+export const error = "#ff3e3e";
+export const secondary = "#4368b3";
 
 export const dark = {
   background: gray5,
@@ -16,7 +18,7 @@ export const light = {
   background: gray0,
   text: gray6,
   borderColor: blue,
-  navColor: "rgba(255, 255, 255, 0.8)",
+  navColor: "#FFFFFF",
   name: "light",
 };
 

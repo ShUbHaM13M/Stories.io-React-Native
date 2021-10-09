@@ -20,6 +20,9 @@ x		Set Default font similar to website
 x	Header Transition
 x		Transition header when changing the theme
 
+x	Button Types
+x		Button styles for edit and delete buttons
+
 Shared Element Transition
 	shared element transition for stories in browse
 
@@ -29,8 +32,19 @@ Logo
 Your stories
 	Show list of all user stories
 	
-x	Button Types
-x		Button styles for edit and delete buttons
-
 Markdown Editor
 	Look for a markdown editor or make a custom one
+
+Edit, Delete Stories
+	Add Dialog to edit or delete story
+	Confirmation Dialog when deleting a story
+	Modal when editing a story
+
+Story Preview
+	Show markdown preview on browse page
+
+Change Native Stack Navigator to Stack-Navigator
+
+Add hamburger drawer menu
+	With Svg
+	With Native ?

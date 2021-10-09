@@ -8,23 +8,29 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useTheme } from "../../context/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
 
 const BUTTON_SIZE = 65;
 const PADDING = 16;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const AddStoryButton = ({ onPress }: { onPress: () => void }) => {
+const AddStoryButton = ({
+  onPress,
+  animated,
+}: {
+  onPress: () => void;
+  animated: Animated.SharedValue<number>;
+}) => {
   const { currentTheme } = useTheme();
-  const sharedValue = useSharedValue(0);
   const inputRange = [0, 1];
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
-        rotateZ: `${interpolate(sharedValue.value, inputRange, [0, -45])}deg`,
+        rotateZ: `${interpolate(animated.value, inputRange, [0, -45])}deg`,
       },
     ],
-    backgroundColor: interpolateColor(sharedValue.value, inputRange, [
+    backgroundColor: interpolateColor(animated.value, inputRange, [
       currentTheme.borderColor,
       "#ff3e3e",
     ]),
@@ -33,12 +39,12 @@ const AddStoryButton = ({ onPress }: { onPress: () => void }) => {
   return (
     <AnimatedPressable
       onPress={() => {
-        sharedValue.value = withSpring(sharedValue.value == 0 ? 1 : 0);
+        animated.value = withSpring(animated.value == 0 ? 1 : 0);
         onPress();
       }}
       style={[styles.button, animatedStyles]}
     >
-      <Text style={{ fontSize: 32, color: "white" }}>+</Text>
+      <Ionicons name="ios-add" size={24} color="white" />
     </AnimatedPressable>
   );
 };

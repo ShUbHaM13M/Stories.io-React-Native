@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, KeyboardAvoidingView } from "react-native";
 import { BorderedContainer, ThemedText, Title, Button } from "../../components";
 import ThemedInput from "../../components/ThemedInput";
@@ -10,12 +10,16 @@ const passwordPlaceholder = Math.random().toString(16).substr(2, 8);
 
 const Login = () => {
   const { currentTheme } = useTheme();
-  const { loginUser } = useAuth();
+  const { loginUser, user } = useAuth();
 
   const navigation = useNavigation();
 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  useEffect(() => {
+    if (user) navigation.navigate("BrowseStack", {});
+  }, [user]);
 
   return (
     <View style={{ flex: 1, backgroundColor: currentTheme.background }}>
@@ -32,6 +36,7 @@ const Login = () => {
           </Title>
           <ThemedText>Username</ThemedText>
           <ThemedInput
+            autoFocus
             state={username}
             setValue={setUsername}
             placeholder="SeyTonic@13"
@@ -44,10 +49,7 @@ const Login = () => {
             secureTextEntry
           />
           <Button
-            onPress={() => {
-              loginUser(username, password);
-              navigation.navigate("BrowseStack", {});
-            }}
+            onPress={() => loginUser(username, password)}
             extraStyles={{ alignSelf: "center", marginVertical: 16 }}
           >
             Login

@@ -18,7 +18,7 @@ import { useTheme } from "../../context/ThemeContext";
 
 interface IconButtonProps extends PressableProps {
   children?: React.ReactNode;
-  isToggled: boolean;
+  isToggled?: boolean;
   extraStyles?: StyleProp<ViewStyle>;
   onButtonPress: () => void;
 }
@@ -26,7 +26,7 @@ interface IconButtonProps extends PressableProps {
 const IconButton = ({
   children,
   onButtonPress,
-  isToggled,
+  isToggled = false,
   extraStyles,
   ...props
 }: IconButtonProps) => {

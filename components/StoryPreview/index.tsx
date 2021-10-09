@@ -5,17 +5,45 @@ import { View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigation } from "@react-navigation/core";
 import { useAuth } from "../../context/AuthContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { error, secondary } from "../../global/colors";
+//@ts-ignore
+import { MarkdownView } from "react-native-markdown-view";
 
-const StoryPreview = ({ story }: { story: Story }) => {
+interface StoryPreviewProps {
+  story: Story;
+  showIsPrivate?: boolean;
+  onDeleteKeyPressed: (storyTitle: string, id: string) => void;
+}
+
+const StoryPreview = ({
+  story,
+  onDeleteKeyPressed,
+  showIsPrivate = false,
+}: StoryPreviewProps) => {
   const { currentTheme } = useTheme();
   const { user } = useAuth();
   const navigation = useNavigation();
 
   return (
     <BorderedContainer extraStyles={{ justifyContent: "space-between" }}>
-      <Title extraStyle={{ color: currentTheme.text, marginBottom: 8 }}>
-        {story.title}
-      </Title>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 8,
+        }}
+      >
+        <Title extraStyle={{ color: currentTheme.text }}>{story.title}</Title>
+        {showIsPrivate && story.isPrivate && (
+          <MaterialCommunityIcons
+            name="lock"
+            size={22}
+            color={currentTheme.text}
+          />
+        )}
+      </View>
       <ThemedText styles={{ color: currentTheme.text }} numberOfLines={5}>
         {story.content}
       </ThemedText>
@@ -33,8 +61,18 @@ const StoryPreview = ({ story }: { story: Story }) => {
         </Button>
         {story.writtenBy == user?.username && (
           <>
-            <Button color="#4368b3">Edit</Button>
-            <Button color="#ff3e3e">Delete</Button>
+            <Button
+              onPress={() => navigation.navigate("EditStory", { story })}
+              color={secondary}
+            >
+              Edit
+            </Button>
+            <Button
+              onPress={() => onDeleteKeyPressed(story.title, story._id)}
+              color={error}
+            >
+              Delete
+            </Button>
           </>
         )}
       </View>

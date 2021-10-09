@@ -1,6 +1,15 @@
 import Constants from "expo-constants";
+import { Alert, Platform, ToastAndroid } from "react-native";
 
-export const API_URL = Constants.manifest?.extra?.API_URL;
+export const API_URL: string = Constants.manifest?.extra?.API_URL;
+
+export function toastMessage(msg: string) {
+  if (Platform.OS === "android") {
+    ToastAndroid.show(msg, ToastAndroid.SHORT);
+  } else {
+    Alert.alert(msg);
+  }
+}
 
 export type Story = {
   _id: string;
@@ -9,8 +18,8 @@ export type Story = {
   createdAt: string;
   likes: Array<string>;
   slug: string;
-  convertedHtml: string;
   writtenBy: string;
+  isPrivate: boolean;
 };
 
 export type Comment = {

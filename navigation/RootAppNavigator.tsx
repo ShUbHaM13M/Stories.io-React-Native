@@ -7,6 +7,7 @@ import {
   DrawerContentComponentProps,
   DrawerItemList,
   DrawerNavigationOptions,
+  useDrawerStatus,
 } from "@react-navigation/drawer";
 import { useTheme } from "../context/ThemeContext";
 import { View } from "react-native";
@@ -17,6 +18,8 @@ import BrowseStack from "./BrowseNavigator";
 import { useAuth, User } from "../context/AuthContext";
 import About from "../pages/About";
 import UserDashboard from "../components/UserDashboard";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import IconButton from "../components/IconButton";
 
 const Drawer = createDrawerNavigator();
 
@@ -26,6 +29,9 @@ const defaultScreenOptions: DrawerNavigationOptions = {
   keyboardDismissMode: "on-drag",
   headerLeft: () => null,
   headerTitle: "Stories.io",
+  headerTitleStyle: {
+    fontFamily: "Montserrat-Medium",
+  },
   swipeEdgeWidth: 80,
   drawerItemStyle: {
     borderRadius: 0,
@@ -75,7 +81,22 @@ export default function () {
     <NavigationContainer>
       <Drawer.Navigator
         initialRouteName="Browse"
-        screenOptions={{ ...screenOptions, ...defaultScreenOptions }}
+        screenOptions={({ navigation }) => ({
+          ...screenOptions,
+          ...defaultScreenOptions,
+          headerRight: () => (
+            <IconButton
+              extraStyles={{ marginRight: 8 }}
+              onButtonPress={() => navigation.toggleDrawer()}
+            >
+              <MaterialCommunityIcons
+                name="menu"
+                size={30}
+                color={currentTheme.borderColor}
+              />
+            </IconButton>
+          ),
+        })}
         drawerContent={drawerContent}
       >
         <Drawer.Screen
@@ -115,7 +136,7 @@ const DrawerBottom = ({ changeTheme }: { changeTheme: () => void }) => {
         borderTopWidth: 1,
       }}
     >
-      <ThemedText styles={{ fontSize: 16 }}> Dark mode </ThemedText>
+      <ThemedText styles={{ fontSize: 16 }}> Dark Theme </ThemedText>
 
       <RNSwitch
         value={isDarkMode}

@@ -9,19 +9,34 @@ import ThemeProvider, { useTheme } from "./context/ThemeContext";
 import { fonts } from "./global/fonts";
 import Loading from "./components/Loading";
 import AuthProvider from "./context/AuthContext";
+import ErrorProvider from "./context/ErrorContext";
+import { ThemedText } from "./components";
+import { error as errorColor } from "./global/colors";
 
 export default function App() {
   const {
     loading: appLoading,
     error,
     value,
-  } = useFetch(API_URL, { method: "GET" });
+  } = useFetch(`${API_URL}/wake-up`, { method: "GET" });
 
   const [loaded] = useFonts(fonts);
 
   return (
     <ThemeProvider>
-      {loaded && <AppContainer appLoading={appLoading} />}
+      {loaded && (
+        <ErrorProvider>
+          {error ? (
+            <View style={[styles.container, { justifyContent: "center" }]}>
+              <ThemedText styles={styles.errorText}>
+                {"Error connecting to the server \n please try again later :/"}
+              </ThemedText>
+            </View>
+          ) : (
+            <AppContainer appLoading={appLoading} />
+          )}
+        </ErrorProvider>
+      )}
     </ThemeProvider>
   );
 }
@@ -49,5 +64,11 @@ const AppContainer = ({ appLoading }: { appLoading: boolean }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  errorText: {
+    fontSize: 18,
+    color: errorColor,
+    fontFamily: "Montserrat-Medium",
+    alignSelf: "center",
   },
 });
