@@ -1,12 +1,20 @@
 {
   "build": {
-    "release": {},
+    "release": {
+      "env": {
+        "API_URL": "https://stories-io-v2.herokuapp.com"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
     }
   },
   "submit": {
-    "release": {}
+    "release": {
+      "env": {
+        "API_URL": "https://stories-io-v2.herokuapp.com"
+      }
+    }
   }
 }
