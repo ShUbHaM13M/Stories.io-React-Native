@@ -11,10 +11,6 @@
     }
   },
   "submit": {
-    "release": {
-      "env": {
-        "API_URL": "https://stories-io-v2.herokuapp.com"
-      }
-    }
+    "release": {}
   }
 }
